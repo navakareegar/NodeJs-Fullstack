@@ -1,5 +1,3 @@
-### .env Configuration
-
 ### Installation
 
 ```bash
