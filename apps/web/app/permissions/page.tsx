@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import PermissionsPageContent from "../../components/PermissionsPageContent";
+import PermissionsPageContent from "../../component/permission/PermissionsPageContent";
 import {
   getServerGraphQLClient,
   WHOAMI_QUERY,

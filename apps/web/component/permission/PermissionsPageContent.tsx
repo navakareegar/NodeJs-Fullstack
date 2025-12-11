@@ -1,21 +1,18 @@
 "use client";
 
-import { memo } from "react";
 import { Box, Container, AppBar, Toolbar, Typography } from "@mui/material";
 import PermissionsList from "./PermissionsList";
-import LogoutButton from "./LogoutButton";
+import LogoutButton from "../login/LogoutButton";
 
-interface PermissionsPageContentProps {
+interface IPermissionsPageContentProps {
   allPermissions: string[];
   userPermissions: string[];
   username: string;
 }
 
-const PermissionsPageContent = memo(function PermissionsPageContent({
-  allPermissions,
-  userPermissions,
-  username,
-}: PermissionsPageContentProps) {
+const PermissionsPageContent = (props: IPermissionsPageContentProps) => {
+  const { allPermissions, userPermissions, username } = props;
+
   return (
     <Box
       sx={{
@@ -50,6 +47,6 @@ const PermissionsPageContent = memo(function PermissionsPageContent({
       </Container>
     </Box>
   );
-});
+};
 
 export default PermissionsPageContent;

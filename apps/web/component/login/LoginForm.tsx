@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useMemo, memo } from "react";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
 import {
   Box,
   Button,
@@ -24,70 +25,77 @@ import {
   getGraphQLClient,
   LOGIN_MUTATION,
   type LoginResponse,
-} from "../lib/api";
+} from "../../lib/api";
+import { ILoginFormData } from "../../type/common";
 
-const LoginForm = memo(function LoginForm() {
+const LoginForm = () => {
   const router = useRouter();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting, isValid },
+  } = useForm<ILoginFormData>({
+    mode: "onChange",
+    defaultValues: {
+      username: "",
+      password: "",
+    },
+  });
 
-    try {
-      const client = getGraphQLClient();
-      console.log("client", client);
+  const onSubmit = useCallback(
+    async (data: ILoginFormData) => {
+      setError(null);
 
-      await client.request<LoginResponse>(LOGIN_MUTATION, {
-        input: { username, password },
-      });
+      try {
+        const client = getGraphQLClient();
+        console.log("client", client);
 
-      // Redirect to permissions page on success
-      router.push("/permissions");
-      router.refresh();
-    } catch (err: any) {
-      const message =
-        err?.response?.errors?.[0]?.message ||
-        err?.message ||
-        "Login failed. Please try again.";
-      setError(message);
-    } finally {
-      setLoading(false);
-    }
-  }, [username, password, router]);
+        await client.request<LoginResponse>(LOGIN_MUTATION, {
+          input: { username: data.username, password: data.password },
+        });
 
-  const handleUsernameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setUsername(e.target.value);
-  }, []);
-
-  const handlePasswordChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-  }, []);
+        // Redirect to permissions page on success
+        router.push("/permissions");
+        router.refresh();
+      } catch (err: any) {
+        const message =
+          err?.response?.errors?.[0]?.message ||
+          err?.message ||
+          "Login failed. Please try again.";
+        setError(message);
+      }
+    },
+    [router]
+  );
 
   const toggleShowPassword = useCallback(() => {
     setShowPassword((prev) => !prev);
   }, []);
 
-  const cardSx = useMemo(() => ({
-    width: "100%",
-    maxWidth: 420,
-    background: "linear-gradient(145deg, #1a1a2e 0%, #16162a 100%)",
-    boxShadow: "0 8px 32px rgba(0, 0, 0, 0.4)",
-  }), []);
+  const cardSx = useMemo(
+    () => ({
+      width: "100%",
+      maxWidth: 420,
+      background: "linear-gradient(145deg, #1a1a2e 0%, #16162a 100%)",
+      boxShadow: "0 8px 32px rgba(0, 0, 0, 0.4)",
+    }),
+    []
+  );
 
-  const buttonSx = useMemo(() => ({
-    mt: 3,
-    py: 1.5,
-    background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
-    "&:hover": {
-      background: "linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)",
-    },
-  }), []);
+  const buttonSx = useMemo(
+    () => ({
+      mt: 3,
+      py: 1.5,
+      background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
+      "&:hover": {
+        background: "linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)",
+      },
+    }),
+    []
+  );
 
   return (
     <Card sx={cardSx}>
@@ -122,14 +130,14 @@ const LoginForm = memo(function LoginForm() {
           </Alert>
         )}
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <TextField
             fullWidth
             label="Username"
-            value={username}
-            onChange={handleUsernameChange}
+            {...register("username", { required: "Username is required" })}
+            error={!!errors.username}
+            helperText={errors.username?.message}
             margin="normal"
-            required
             autoComplete="username"
             autoFocus
             InputProps={{
@@ -144,10 +152,10 @@ const LoginForm = memo(function LoginForm() {
             fullWidth
             label="Password"
             type={showPassword ? "text" : "password"}
-            value={password}
-            onChange={handlePasswordChange}
+            {...register("password", { required: "Password is required" })}
+            error={!!errors.password}
+            helperText={errors.password?.message}
             margin="normal"
-            required
             autoComplete="current-password"
             InputProps={{
               startAdornment: (
@@ -173,10 +181,10 @@ const LoginForm = memo(function LoginForm() {
             fullWidth
             variant="contained"
             size="large"
-            disabled={loading || !username || !password}
+            disabled={isSubmitting || !isValid}
             sx={buttonSx}
           >
-            {loading ? (
+            {isSubmitting ? (
               <CircularProgress size={24} color="inherit" />
             ) : (
               "Sign In"
@@ -186,6 +194,6 @@ const LoginForm = memo(function LoginForm() {
       </CardContent>
     </Card>
   );
-});
+};
 
-export default LoginForm;
+export default memo(LoginForm);

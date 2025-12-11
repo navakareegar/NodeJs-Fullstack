@@ -21,12 +21,6 @@ import {
 } from "@mui/icons-material";
 import { ReactElement } from "react";
 
-interface PermissionsListProps {
-  allPermissions: string[];
-  userPermissions: string[];
-  username: string;
-}
-
 const permissionIcons: Record<string, React.ReactNode> = {
   CREATE_USER: <PersonAdd />,
   READ_USER: <Visibility />,
@@ -34,11 +28,15 @@ const permissionIcons: Record<string, React.ReactNode> = {
   DELETE_USER: <Delete />,
 };
 
-const PermissionsList = memo(function PermissionsList({
-  allPermissions,
-  userPermissions,
-  username,
-}: PermissionsListProps) {
+interface IPermissionsListProps {
+  allPermissions: string[];
+  userPermissions: string[];
+  username: string;
+}
+
+const PermissionsList = (props: IPermissionsListProps) => {
+  const { allPermissions, userPermissions, username } = props;
+
   const userPermissionSet = useMemo(
     () => new Set(userPermissions),
     [userPermissions]
@@ -149,22 +147,22 @@ const PermissionsList = memo(function PermissionsList({
               {missingPermissions.length > 0 ? (
                 <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
                   {missingPermissions.map((permission) => (
-                      <Chip
-                        key={permission}
-                        icon={
-                          (permissionIcons[permission] as ReactElement) || (
-                            <Cancel />
-                          )
-                        }
-                        label={permission.replace(/_/g, " ")}
-                        color="error"
-                        variant="outlined"
-                        sx={{
-                          borderColor: "error.main",
-                          "& .MuiChip-icon": { color: "error.main" },
-                        }}
-                      />
-                    ))}
+                    <Chip
+                      key={permission}
+                      icon={
+                        (permissionIcons[permission] as ReactElement) || (
+                          <Cancel />
+                        )
+                      }
+                      label={permission.replace(/_/g, " ")}
+                      color="error"
+                      variant="outlined"
+                      sx={{
+                        borderColor: "error.main",
+                        "& .MuiChip-icon": { color: "error.main" },
+                      }}
+                    />
+                  ))}
                 </Box>
               ) : (
                 <Typography variant="body2" color="success.main">
@@ -234,6 +232,6 @@ const PermissionsList = memo(function PermissionsList({
       </Card>
     </Box>
   );
-});
+};
 
-export default PermissionsList;
+export default memo(PermissionsList);
