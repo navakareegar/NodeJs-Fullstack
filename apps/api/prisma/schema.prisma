@@ -3,7 +3,8 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 model User {
@@ -15,18 +16,20 @@ model User {
 }
 
 model Permission {
-  id    Int      @id @default(autoincrement())
-  name  String   @unique
+  id    Int              @id @default(autoincrement())
+  name  String           @unique
   users UserPermission[]
 }
 
 model UserPermission {
-  id           Int        @id @default(autoincrement())
+  id           Int @id @default(autoincrement())
   userId       Int
   permissionId Int
 
-  user       User       @relation(fields: [userId], references: [id])
-  permission Permission @relation(fields: [permissionId], references: [id])
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, permissionId])
 }
 
 model Session {
