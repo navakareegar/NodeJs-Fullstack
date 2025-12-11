@@ -37,3 +37,4 @@ export default function EmotionRegistry({ children }: EmotionRegistryProps) {
   return <CacheProvider value={cache}>{children}</CacheProvider>;
 }
 
+

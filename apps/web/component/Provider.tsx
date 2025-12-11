@@ -6,11 +6,11 @@ import CssBaseline from "@mui/material/CssBaseline";
 import theme from "../lib/theme";
 import EmotionRegistry from "./EmotionRegistry";
 
-interface IProvidersProps {
+interface IProviderProps {
   children: React.ReactNode;
 }
 
-const Providers = (props: IProvidersProps) => {
+const Provider = (props: IProviderProps) => {
   const { children } = props;
   return (
     <EmotionRegistry>
@@ -22,4 +22,4 @@ const Providers = (props: IProvidersProps) => {
   );
 };
 
-export default memo(Providers);
+export default memo(Provider);
