@@ -5,22 +5,15 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import {
   Box,
-  Button,
-  TextField,
   Typography,
   Alert,
   CircularProgress,
   Card,
   CardContent,
-  InputAdornment,
-  IconButton,
 } from "@mui/material";
-import {
-  Visibility,
-  VisibilityOff,
-  LockOutlined,
-  PersonOutline,
-} from "@mui/icons-material";
+import { LockOutlined, PersonOutline } from "@mui/icons-material";
+import { CustomTextField } from "@repo/ui/component/text-field/TextField";
+import { CustomButton } from "@repo/ui/component/button/Button";
 import {
   getGraphQLClient,
   LOGIN_MUTATION,
@@ -30,7 +23,6 @@ import { ILoginFormData } from "../../type/common";
 
 const LoginForm = () => {
   const router = useRouter();
-  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const {
@@ -70,10 +62,6 @@ const LoginForm = () => {
     },
     [router]
   );
-
-  const toggleShowPassword = useCallback(() => {
-    setShowPassword((prev) => !prev);
-  }, []);
 
   const cardSx = useMemo(
     () => ({
@@ -131,8 +119,7 @@ const LoginForm = () => {
         )}
 
         <form onSubmit={handleSubmit(onSubmit)}>
-          <TextField
-            fullWidth
+          <CustomTextField
             label="Username"
             {...register("username", { required: "Username is required" })}
             error={!!errors.username}
@@ -140,43 +127,20 @@ const LoginForm = () => {
             margin="normal"
             autoComplete="username"
             autoFocus
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <PersonOutline sx={{ color: "text.secondary" }} />
-                </InputAdornment>
-              ),
-            }}
+            startIcon={<PersonOutline sx={{ color: "text.secondary" }} />}
           />
-          <TextField
-            fullWidth
+          <CustomTextField
             label="Password"
-            type={showPassword ? "text" : "password"}
+            type="password"
             {...register("password", { required: "Password is required" })}
             error={!!errors.password}
             helperText={errors.password?.message}
             margin="normal"
             autoComplete="current-password"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <LockOutlined sx={{ color: "text.secondary" }} />
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={toggleShowPassword}
-                    edge="end"
-                    size="small"
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
+            startIcon={<LockOutlined sx={{ color: "text.secondary" }} />}
+            showPasswordToggle
           />
-          <Button
+          <CustomButton
             type="submit"
             fullWidth
             variant="contained"
@@ -189,7 +153,7 @@ const LoginForm = () => {
             ) : (
               "Sign In"
             )}
-          </Button>
+          </CustomButton>
         </form>
       </CardContent>
     </Card>
