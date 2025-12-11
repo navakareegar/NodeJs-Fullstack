@@ -31,3 +31,5 @@ npx prisma db seed
 # From the project root (starts all services)
 pnpm dev
 ```
+
+You can login with / (username: user, password: user123)
