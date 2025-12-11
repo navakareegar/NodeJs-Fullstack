@@ -1,5 +1,6 @@
-'use client';
+"use client";
 
+import { memo } from "react";
 import { Box, Container, AppBar, Toolbar, Typography } from "@mui/material";
 import PermissionsList from "./PermissionsList";
 import LogoutButton from "./LogoutButton";
@@ -10,7 +11,7 @@ interface PermissionsPageContentProps {
   username: string;
 }
 
-export default function PermissionsPageContent({
+const PermissionsPageContent = memo(function PermissionsPageContent({
   allPermissions,
   userPermissions,
   username,
@@ -49,5 +50,6 @@ export default function PermissionsPageContent({
       </Container>
     </Box>
   );
-}
+});
 
+export default PermissionsPageContent;

@@ -1,5 +1,6 @@
 "use client";
 
+import { memo, useMemo } from "react";
 import {
   Box,
   Typography,
@@ -33,12 +34,20 @@ const permissionIcons: Record<string, React.ReactNode> = {
   DELETE_USER: <Delete />,
 };
 
-export default function PermissionsList({
+const PermissionsList = memo(function PermissionsList({
   allPermissions,
   userPermissions,
   username,
 }: PermissionsListProps) {
-  const userPermissionSet = new Set(userPermissions);
+  const userPermissionSet = useMemo(
+    () => new Set(userPermissions),
+    [userPermissions]
+  );
+
+  const missingPermissions = useMemo(
+    () => allPermissions.filter((p) => !userPermissionSet.has(p)),
+    [allPermissions, userPermissionSet]
+  );
 
   return (
     <Box>
@@ -137,12 +146,9 @@ export default function PermissionsList({
                 Permissions you do not have
               </Typography>
               <Divider sx={{ mb: 2, borderColor: "rgba(255,255,255,0.1)" }} />
-              {allPermissions.filter((p) => !userPermissionSet.has(p)).length >
-              0 ? (
+              {missingPermissions.length > 0 ? (
                 <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-                  {allPermissions
-                    .filter((p) => !userPermissionSet.has(p))
-                    .map((permission) => (
+                  {missingPermissions.map((permission) => (
                       <Chip
                         key={permission}
                         icon={
@@ -228,4 +234,6 @@ export default function PermissionsList({
       </Card>
     </Box>
   );
-}
+});
+
+export default PermissionsList;

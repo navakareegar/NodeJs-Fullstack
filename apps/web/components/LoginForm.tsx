@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, useMemo, memo } from "react";
 import { useRouter } from "next/navigation";
 import {
   Box,
@@ -26,7 +26,7 @@ import {
   type LoginResponse,
 } from "../lib/api";
 
-export default function LoginForm() {
+const LoginForm = memo(function LoginForm() {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -34,7 +34,7 @@ export default function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
@@ -59,17 +59,38 @@ export default function LoginForm() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [username, password, router]);
+
+  const handleUsernameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setUsername(e.target.value);
+  }, []);
+
+  const handlePasswordChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+  }, []);
+
+  const toggleShowPassword = useCallback(() => {
+    setShowPassword((prev) => !prev);
+  }, []);
+
+  const cardSx = useMemo(() => ({
+    width: "100%",
+    maxWidth: 420,
+    background: "linear-gradient(145deg, #1a1a2e 0%, #16162a 100%)",
+    boxShadow: "0 8px 32px rgba(0, 0, 0, 0.4)",
+  }), []);
+
+  const buttonSx = useMemo(() => ({
+    mt: 3,
+    py: 1.5,
+    background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
+    "&:hover": {
+      background: "linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)",
+    },
+  }), []);
 
   return (
-    <Card
-      sx={{
-        width: "100%",
-        maxWidth: 420,
-        background: "linear-gradient(145deg, #1a1a2e 0%, #16162a 100%)",
-        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.4)",
-      }}
-    >
+    <Card sx={cardSx}>
       <CardContent sx={{ p: 4 }}>
         <Box sx={{ textAlign: "center", mb: 4 }}>
           <Box
@@ -106,7 +127,7 @@ export default function LoginForm() {
             fullWidth
             label="Username"
             value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={handleUsernameChange}
             margin="normal"
             required
             autoComplete="username"
@@ -124,7 +145,7 @@ export default function LoginForm() {
             label="Password"
             type={showPassword ? "text" : "password"}
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={handlePasswordChange}
             margin="normal"
             required
             autoComplete="current-password"
@@ -137,7 +158,7 @@ export default function LoginForm() {
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton
-                    onClick={() => setShowPassword(!showPassword)}
+                    onClick={toggleShowPassword}
                     edge="end"
                     size="small"
                   >
@@ -153,14 +174,7 @@ export default function LoginForm() {
             variant="contained"
             size="large"
             disabled={loading || !username || !password}
-            sx={{
-              mt: 3,
-              py: 1.5,
-              background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
-              "&:hover": {
-                background: "linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)",
-              },
-            }}
+            sx={buttonSx}
           >
             {loading ? (
               <CircularProgress size={24} color="inherit" />
@@ -172,4 +186,6 @@ export default function LoginForm() {
       </CardContent>
     </Card>
   );
-}
+});
+
+export default LoginForm;

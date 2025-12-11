@@ -1,16 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback, memo, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, CircularProgress } from '@mui/material';
 import { Logout } from '@mui/icons-material';
 import { getGraphQLClient, LOGOUT_MUTATION } from '../lib/api';
 
-export default function LogoutButton() {
+const LogoutButton = memo(function LogoutButton() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  const handleLogout = async () => {
+  const handleLogout = useCallback(async () => {
     setLoading(true);
     try {
       const client = getGraphQLClient();
@@ -23,7 +23,15 @@ export default function LogoutButton() {
       router.push('/login');
       router.refresh();
     }
-  };
+  }, [router]);
+
+  const buttonSx = useMemo(() => ({
+    borderColor: 'error.main',
+    '&:hover': {
+      borderColor: 'error.light',
+      backgroundColor: 'rgba(239, 68, 68, 0.1)',
+    },
+  }), []);
 
   return (
     <Button
@@ -32,16 +40,12 @@ export default function LogoutButton() {
       startIcon={loading ? <CircularProgress size={18} /> : <Logout />}
       onClick={handleLogout}
       disabled={loading}
-      sx={{
-        borderColor: 'error.main',
-        '&:hover': {
-          borderColor: 'error.light',
-          backgroundColor: 'rgba(239, 68, 68, 0.1)',
-        },
-      }}
+      sx={buttonSx}
     >
       {loading ? 'Logging out...' : 'Logout'}
     </Button>
   );
-}
+});
+
+export default LogoutButton;
 
