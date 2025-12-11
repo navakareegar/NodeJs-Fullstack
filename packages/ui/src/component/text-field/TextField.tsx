@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-export interface TextFieldProps extends Omit<
+export interface ITextFieldProps extends Omit<
   MuiTextFieldProps,
   "variant" | "InputProps"
 > {
@@ -53,7 +53,7 @@ const textFieldSx: SxProps<Theme> = {
   },
 };
 
-export const CustomTextField = forwardRef<HTMLDivElement, TextFieldProps>(
+export const CustomTextField = forwardRef<HTMLDivElement, ITextFieldProps>(
   (
     { startIcon, endIcon, showPasswordToggle = false, type, sx, ...props },
     ref

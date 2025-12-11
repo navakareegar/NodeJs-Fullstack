@@ -3,7 +3,7 @@
 import { Button, SxProps, Theme } from "@mui/material";
 import { ReactNode } from "react";
 
-interface ButtonProps {
+interface IButtonProps {
   type?: "button" | "submit" | "reset";
   children: ReactNode;
   className?: string;
@@ -15,7 +15,7 @@ interface ButtonProps {
   sx?: SxProps<Theme>;
 }
 
-export const CustomButton = (props: ButtonProps) => {
+export const CustomButton = (props: IButtonProps) => {
   const {
     type,
     children,
