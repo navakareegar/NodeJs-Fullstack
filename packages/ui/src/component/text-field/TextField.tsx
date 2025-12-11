@@ -23,7 +23,7 @@ export interface TextFieldProps extends Omit<
 const textFieldSx: SxProps<Theme> = {
   "& .MuiOutlinedInput-root": {
     backgroundColor: "rgba(255, 255, 255, 0.03)",
-    borderRadius: 2,
+    borderRadius: 0,
     transition: "all 0.2s ease-in-out",
     "&:hover": {
       backgroundColor: "rgba(255, 255, 255, 0.05)",

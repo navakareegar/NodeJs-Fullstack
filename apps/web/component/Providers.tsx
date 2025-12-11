@@ -4,6 +4,7 @@ import { memo } from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import theme from "../lib/theme";
+import EmotionRegistry from "./EmotionRegistry";
 
 interface IProvidersProps {
   children: React.ReactNode;
@@ -12,10 +13,12 @@ interface IProvidersProps {
 const Providers = (props: IProvidersProps) => {
   const { children } = props;
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      {children}
-    </ThemeProvider>
+    <EmotionRegistry>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        {children}
+      </ThemeProvider>
+    </EmotionRegistry>
   );
 };
 
